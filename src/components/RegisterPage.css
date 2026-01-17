@@ -1,0 +1,195 @@
+/* =========================================
+   1. PAGE LAYOUT & WRAPPER
+   ========================================= */
+.register-page-wrapper {
+  padding-top: 120px; /* Space for fixed navbar */
+  min-height: 100vh;
+  padding-bottom: 80px;
+  background-color: transparent; /* Allows main app background to show through */
+}
+
+/* =========================================
+   2. GLASS CARD CONTAINER
+   ========================================= */
+.reg-glass-card {
+  background: rgba(15, 15, 15, 0.95) !important; /* Deep dark background */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Deep shadow for pop */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  color: white;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+/* =========================================
+   3. TYPOGRAPHY & HEADERS
+   ========================================= */
+.reg-section-header {
+  color: #f97316; /* Brand Orange */
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reg-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e5e5e5; /* Light grey text */
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* =========================================
+   4. INPUTS, TEXTAREAS & SELECTS
+   ========================================= */
+.reg-input,
+.reg-select,
+.reg-textarea {
+  background-color: #1a1a1a !important; /* Solid dark grey background */
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important; /* Pure white text */
+  padding: 14px 16px;
+  border-radius: 12px;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  appearance: none; /* Removes default browser styling */
+}
+
+/* Add custom arrow for select boxes */
+.reg-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+/* Placeholder Text Color */
+.reg-input::placeholder,
+.reg-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-size: 0.95rem;
+}
+
+/* Focus State - The Orange Glow */
+.reg-input:focus,
+.reg-select:focus,
+.reg-textarea:focus {
+  background-color: #000000 !important;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15) !important;
+  outline: none;
+}
+
+/* =========================================
+   5. DROPDOWN MENU STYLING (The Screenshot Part)
+   ========================================= */
+/* Style the dropdown options to be dark */
+.reg-select option {
+  background-color: #121212;
+  color: white;
+  padding: 12px;
+}
+
+/* Style the Category Headers (Creative, Operations, etc.) */
+.reg-select optgroup {
+  background-color: #1a1a1a;
+  color: #f97316; /* Orange headers */
+  font-weight: 800;
+  font-style: normal;
+  padding: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   6. BUTTONS
+   ========================================= */
+/* Submit Button */
+.reg-btn-submit {
+  background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+  border: none;
+  color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 16px;
+  border-radius: 12px;
+  width: 100%;
+  margin-top: 30px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.reg-btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
+  color: white;
+}
+
+.reg-btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Navigation Buttons (Back / Home) */
+.reg-nav-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.reg-nav-btn:hover {
+  background: white;
+  color: black;
+  border-color: white;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   7. UTILITIES & ANIMATIONS
+   ========================================= */
+.fade-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .register-page-wrapper {
+    padding-top: 100px;
+    padding-bottom: 40px;
+  }
+  
+  .reg-glass-card {
+    padding: 1.5rem !important; /* Less padding on mobile */
+  }
+  
+  .display-4 {
+    font-size: 2.5rem; /* Smaller title on mobile */
+  }
+}
