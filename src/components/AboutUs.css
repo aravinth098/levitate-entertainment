@@ -1,0 +1,208 @@
+/* --- CORE VARIABLES --- */
+:root {
+  --about-blob-purple: #a855f7;
+  --about-blob-orange: #f97316;
+}
+
+/* --- PAGE CONTAINER SCOPE --- */
+.about-page {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden; 
+  background-color: #05020a;
+  width: 100%;
+}
+
+/* --- ANIMATED BACKGROUND BLOBS --- */
+.about-page .blob-container {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  overflow: hidden; pointer-events: none; z-index: -1;
+}
+
+.about-page .blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: floatBlobs 10s infinite ease-in-out alternate;
+}
+
+.about-page .blob-1 {
+  top: 10%; left: -10%; width: 500px; height: 500px;
+  background: var(--about-blob-purple);
+  animation-delay: 0s;
+}
+
+.about-page .blob-2 {
+  bottom: 20%; right: -10%; width: 400px; height: 400px;
+  background: var(--about-blob-orange);
+  animation-delay: -5s;
+}
+
+@keyframes floatBlobs {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 50px) scale(1.1); }
+}
+
+/* --- TYPOGRAPHY (SCOPED) --- */
+.about-page .text-levitate-orange { color: #f97316 !important; }
+.about-page .text-levitate-purple { color: #a855f7 !important; }
+
+.about-page .gradient-num {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  display: inline-block;
+}
+
+/* Responsive Fonts */
+.about-page .display-1 { font-size: clamp(2.8rem, 10vw, 5.5rem) !important; letter-spacing: -2px; line-height: 1.1; }
+.about-page .display-4 { font-size: clamp(2.2rem, 6vw, 3.5rem) !important; }
+.about-page .display-6 { font-size: clamp(1.6rem, 5vw, 2.5rem) !important; }
+
+/* --- GLASS CARDS (SCOPED) --- */
+.about-page .glass-card {
+  background: linear-gradient(180deg, rgba(20, 10, 30, 0.6) 0%, rgba(5, 2, 10, 0.9) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden; 
+  height: 100%; 
+}
+
+.about-page .glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transform: skewX(-25deg);
+  transition: 0.5s;
+}
+
+.about-page .glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.about-page .glass-card:hover::before {
+  left: 150%; 
+  transition: 0.7s;
+}
+
+/* --- TIMELINE (SCOPED) --- */
+.about-page .timeline-container {
+  position: relative;
+  padding-left: 40px; 
+  margin-left: 0;
+}
+
+.about-page .timeline-container::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 14px;
+  width: 3px;
+  background: linear-gradient(to bottom, transparent, #a855f7, #f97316, transparent);
+  border-radius: 3px;
+  opacity: 0.6;
+}
+
+.about-page .timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.about-page .timeline-dot {
+  position: absolute;
+  left: -34px;
+  top: 25px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #05020a;
+  border: 3px solid #a855f7;
+  box-shadow: 0 0 15px #a855f7;
+  z-index: 2;
+  transition: 0.3s ease;
+}
+
+.about-page .timeline-item:hover .timeline-dot {
+  background: #f97316;
+  border-color: #f97316;
+  box-shadow: 0 0 25px #f97316;
+  transform: scale(1.2);
+}
+
+/* --- ICONS & BADGES (SCOPED) --- */
+.about-page .icon-circle {
+  width: 70px; height: 70px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.5rem;
+  transition: all 0.4s ease;
+  position: relative; overflow: hidden;
+}
+
+.about-page .glass-card:hover .icon-circle { 
+  transform: scale(1.1) rotate(5deg); 
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+}
+
+.about-page .badge.glass-badge {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+/* --- RESPONSIVE FIXES (MATCHING APP.JS) --- */
+@media (max-width: 991px) {
+  .about-page .content-wrapper { 
+    padding-top: 100px !important; 
+    padding-left: 20px; 
+    padding-right: 20px; 
+  }
+  
+  .about-page .blob { opacity: 0.2; width: 300px; height: 300px; }
+  
+  .about-page .timeline-container { padding-left: 30px; }
+  .about-page .timeline-container::before { left: 9px; }
+  .about-page .timeline-dot { left: -29px; width: 14px; height: 14px; top: 22px; }
+  
+  .about-page .glass-card { padding: 1.5rem !important; }
+  
+  .about-page section { margin-bottom: 4rem !important; padding-top: 0 !important; }
+  
+  /* --- FOOTER RESPONSIVE MATCH --- */
+  /* Ensures footer aligns LEFT like the main app */
+  .about-page footer .row { 
+    text-align: left !important; 
+  }
+  
+  .about-page footer .col-lg-4, 
+  .about-page footer .col-lg-2 { 
+    margin-bottom: 2rem;
+  }
+
+  /* Reset flex alignment for social icons on mobile */
+  .about-page footer .d-flex { 
+    justify-content: flex-start !important; 
+  }
+}
