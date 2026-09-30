@@ -350,6 +350,42 @@ const CounterItem = ({ target, label }) => {
   );
 };
 
+const FeaturedEvent = () => (
+  <section className="position-relative z-1 py-5 my-3">
+    <div className="container fade-up">
+      <div className="glass p-1 p-md-2 rounded-4 overflow-hidden border-0 position-relative group" style={{background: 'linear-gradient(to bottom right, rgba(255,255,255,0.05), rgba(255,255,255,0.01))', boxShadow: '0 10px 30px rgba(0,0,0,0.5)'}}>
+        <div className="row g-0 align-items-center bg-black rounded-4 overflow-hidden">
+          <div className="col-lg-6 p-0 d-flex justify-content-center align-items-center" style={{ backgroundColor: '#000' }}>
+            <img 
+              src="https://res.cloudinary.com/dhqferqbw/image/upload/v1790088638/photo_2026-09-22_20-19-28_qt0hsj.jpg" 
+              alt="Rimi Tomy Live in Canada" 
+              className="img-fluid"
+              style={{ maxHeight: '500px', width: '100%', objectFit: 'contain' }}
+            />
+          </div>
+          <div className="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center h-100">
+            <div className="small fw-bold text-uppercase mb-2" style={{color: '#f97316', letterSpacing: '2px'}}><i className="bi bi-star-fill me-2"></i>Featured Event</div>
+            <h2 className="display-6 fw-black mb-3 text-white">Rimi Tomy Live in Canada</h2>
+            <p className="text-white-50 mb-4 fs-6 lh-lg">
+              Experience the energy and magic of Rimi Tomy live on stage! Don't miss out on the biggest musical extravaganza coming to Canada. Get ready for an unforgettable night.
+            </p>
+            <div>
+                <a 
+                href="https://levitateinc.ca/rimi-tomy-live-in-canada/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn btn-gradient px-4 py-3 fw-bold rounded-pill text-uppercase letter-spacing-1 d-inline-flex align-items-center gap-2 hover-lift hover-glow"
+                >
+                Get Tickets & Info <i className="bi bi-arrow-right"></i>
+                </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
 const About = () => (
   <section id="about" className="position-relative z-1">
     <div className="container fade-up">
@@ -1077,6 +1113,7 @@ const Home = () => {
     <>
       <Navbar />
       <Hero />
+      <FeaturedEvent />
       <About />
       <Services />
       <Events events={events} />
