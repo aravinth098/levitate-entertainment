@@ -57,7 +57,7 @@ const Admin = () => {
   // --- HANDLE LOGIN ---
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === 'levitateAdmin') {
+    if (passwordInput === 'leviadmin@123') {
       setIsAuthenticated(true);
       setErrorMsg('');
     } else {

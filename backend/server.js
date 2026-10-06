@@ -51,7 +51,7 @@ app.get('/api/events', (req, res) => {
 app.post('/api/events', (req, res) => {
     // Admin Password Check
     const adminPassword = req.headers['x-admin-password'];
-    if (adminPassword !== 'levitateAdmin') {
+    if (adminPassword !== 'leviadmin@123') {
         return res.status(403).json({ error: "Unauthorized" });
     }
 
@@ -99,7 +99,7 @@ app.post('/api/events', (req, res) => {
 // 3. DELETE EVENT
 app.delete('/api/events/:id', (req, res) => {
     const adminPassword = req.headers['x-admin-password'];
-    if (adminPassword !== 'levitateAdmin') {
+    if (adminPassword !== 'leviadmin@123') {
         return res.status(403).json({ error: "Unauthorized" });
     }
 
@@ -118,7 +118,7 @@ app.delete('/api/events/:id', (req, res) => {
 // 4. TOGGLE LOCK STATUS
 app.put('/api/events/:id/lock', (req, res) => {
     const adminPassword = req.headers['x-admin-password'];
-    if (adminPassword !== 'levitateAdmin') {
+    if (adminPassword !== 'leviadmin@123') {
         return res.status(403).json({ error: "Unauthorized" });
     }
 
