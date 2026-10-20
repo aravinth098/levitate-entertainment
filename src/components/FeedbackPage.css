@@ -1,0 +1,471 @@
+/* ==========================================================================
+   FeedbackPage.css - Premium Glassmorphic Theme for Maha Onam & Rimi Tomy
+   ========================================================================== */
+
+.feedback-page-wrapper {
+  min-height: 100vh;
+  padding-top: 110px;
+  padding-bottom: 100px;
+  position: relative;
+  overflow-x: hidden;
+  background-color: #06030c;
+  color: #ffffff;
+}
+
+/* Background Ambient Lighting */
+.feedback-bg-glow-1 {
+  position: fixed;
+  top: -150px;
+  right: -100px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.18) 0%, rgba(234, 179, 8, 0.08) 40%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.feedback-bg-glow-2 {
+  position: fixed;
+  bottom: 0;
+  left: -150px;
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.16) 0%, rgba(236, 72, 153, 0.08) 45%, rgba(0, 0, 0, 0) 75%);
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glass Card */
+.feedback-card {
+  background: rgba(18, 14, 28, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.65), 0 0 30px rgba(249, 115, 22, 0.05);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .feedback-card {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+}
+
+/* Header Elements */
+.feedback-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 179, 8, 0.15));
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  color: #fb923c;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.feedback-title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .feedback-title {
+    font-size: 2rem;
+  }
+}
+
+.feedback-subtitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 6px;
+}
+
+/* Progress Tracker */
+.feedback-progress-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin-bottom: 35px;
+}
+
+.feedback-progress-bar-bg {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.feedback-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f97316, #fbbf24, #10b981);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Question Section & Box */
+.question-box {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px 26px;
+  margin-bottom: 24px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.question-box:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.question-box.is-invalid {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.04) !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15) !important;
+}
+
+.question-box.is-answered {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.question-number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 179, 8, 0.25));
+  border: 1px solid rgba(249, 115, 22, 0.4);
+  color: #fb923c;
+  font-weight: 800;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.question-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.required-asterisk {
+  color: #ef4444;
+  margin-left: 4px;
+  font-weight: 800;
+}
+
+.field-error-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #f87171;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 12px;
+  padding: 6px 12px;
+  background: rgba(239, 68, 68, 0.12);
+  border-left: 3px solid #ef4444;
+  border-radius: 6px;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Rating Option Buttons (Likert Scale & Stars) */
+.rating-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+@media (max-width: 576px) {
+  .rating-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rating-option-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+  padding: 14px 12px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 72px;
+}
+
+.rating-option-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.rating-option-btn.selected {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.22), rgba(234, 179, 8, 0.18));
+  border-color: #f97316;
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(249, 115, 22, 0.35);
+  transform: translateY(-2px);
+}
+
+.rating-score-num {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #fbbf24;
+}
+
+.rating-score-text {
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+/* Net Promoter Score (1 - 10) */
+.nps-container {
+  margin-top: 18px;
+}
+
+.nps-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+@media (max-width: 768px) {
+  .nps-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+}
+
+.nps-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  color: #e5e7eb;
+  padding: 12px 4px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nps-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  color: #ffffff;
+}
+
+.nps-btn.selected {
+  background: linear-gradient(135deg, #f97316, #fbbf24);
+  border-color: #fbbf24;
+  color: #000000;
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.5);
+  transform: scale(1.06);
+}
+
+.nps-btn.selected.promoter {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  border-color: #34d399;
+  color: #000000;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.nps-btn.selected.detractor {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.nps-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Age Groups & Radio Badges */
+.pills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pill-option {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pill-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.pill-option.selected {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 179, 8, 0.2));
+  border-color: #f97316;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(249, 115, 22, 0.3);
+}
+
+/* Inputs & Textareas */
+.feedback-textarea,
+.feedback-input {
+  width: 100%;
+  background: #110e1a !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 0.98rem;
+  transition: all 0.25s ease;
+  margin-top: 14px;
+}
+
+.feedback-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.feedback-textarea:focus,
+.feedback-input:focus {
+  outline: none;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.18) !important;
+  background: #161224 !important;
+}
+
+.feedback-textarea::placeholder,
+.feedback-input::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* Submit Action Button */
+.feedback-submit-btn {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #db2777 100%);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 18px 40px;
+  border-radius: 999px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 480px;
+}
+
+.feedback-submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(249, 115, 22, 0.6);
+  color: #ffffff;
+}
+
+.feedback-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Success Celebration Screen */
+.feedback-success-card {
+  text-align: center;
+  padding: 50px 30px;
+}
+
+.success-icon-wrapper {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.3));
+  border: 2px solid #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 25px;
+  box-shadow: 0 0 35px rgba(16, 185, 129, 0.4);
+  font-size: 2.8rem;
+  color: #34d399;
+}
+
+/* QR Code Modal Overlay */
+.qr-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.qr-modal-card {
+  background: #141022;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+}

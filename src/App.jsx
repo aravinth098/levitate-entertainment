@@ -9,7 +9,8 @@ import PastEventPage from './components/PastEvent';
 import { EVENTS_DATA } from './components/EventData';
 import Admin from './components/Admin';
 import RegisterPage from './components/RegisterPage'; 
-import AboutUs from './components/AboutUs'; 
+import AboutUs from './components/AboutUs';
+import FeedbackPage from './components/FeedbackPage'; 
 
 // --- CONFIGURATION ---
 const API_URL = 'https://g7l.c49.mytemp.website/api.php';
@@ -983,6 +984,7 @@ const Footer = () => {
             <ul className="list-unstyled d-flex flex-column gap-3 small">
               <li><a href="/#events" className="text-white-50 text-decoration-none hover-purple transition-all">Upcoming Lineup</a></li>
               <li><Link to="/past-events" className="text-white-50 text-decoration-none hover-purple transition-all">Past Archive</Link></li>
+              <li><Link to="/feedback" className="text-warning text-decoration-none hover-purple transition-all fw-bold"><i className="bi bi-chat-heart-fill me-1"></i>Event Feedback</Link></li>
             </ul>
           </div>
 
@@ -1144,6 +1146,27 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         
         {/* IMPORTANT: Wrap RegisterPage with Navbar and Footer since it is an external file */}
+        <Route path="/feedback" element={
+            <>
+                <Navbar />
+                <FeedbackPage />
+                <Footer />
+            </>
+        } />
+        <Route path="/maha-onam-feedback" element={
+            <>
+                <Navbar />
+                <FeedbackPage />
+                <Footer />
+            </>
+        } />
+        <Route path="/rimi-tomy-feedback" element={
+            <>
+                <Navbar />
+                <FeedbackPage />
+                <Footer />
+            </>
+        } />
         <Route path="/register" element={
             <>
                 <Navbar />
