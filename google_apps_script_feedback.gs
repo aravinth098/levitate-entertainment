@@ -2,7 +2,7 @@
  * ============================================================================
  * LEVITATE ENTERTAINMENT — RIMI TOMY LIVE CANADA 2026
  * Google Apps Script for Real-Time Event Feedback Collection & Automated Emails
- * Matches Official Attendee Feedback Questionnaire (14 Questions + Contacts)
+ * Matches Official Attendee Feedback Questionnaire (13 Questions + Contacts)
  * ============================================================================
  */
 
@@ -55,21 +55,20 @@ function doPost(e) {
     var q5 = data.improveAreas || "";
     var q6 = data.oneThingBetter || "";
     var q7 = data.artistNext || "";
-    var q8 = data.eventsInterest2027 || "";
-    var q9 = data.attendAgain || "";
-    var q10 = data.recommendScore ? String(data.recommendScore) + " / 10" : "";
-    var q11 = data.heardFrom || "";
-    var q11Other = data.heardFromOther || "";
-    var q12 = data.updatesCurrent || "";
-    var q13 = data.updatesPreferred || "";
-    var q14 = data.involvementInterest || "";
+    var q8 = data.attendAgain || "";
+    var q9 = data.recommendScore ? String(data.recommendScore) + " / 10" : "";
+    var q10 = data.heardFrom || "";
+    var q10Other = data.heardFromOther || "";
+    var q11 = data.updatesCurrent || "";
+    var q12 = data.updatesPreferred || "";
+    var q13 = data.involvementInterest || "";
 
     var attendeeName = data.attendeeName ? data.attendeeName.trim() : "Anonymous";
     var attendeeEmail = data.attendeeEmail ? data.attendeeEmail.trim() : "";
     var attendeePhone = data.attendeePhone ? data.attendeePhone.trim() : "";
     var marketingConsent = data.marketingConsent || "No";
 
-    // 21 Column Row
+    // 20 Column Row
     var row = [
       formattedDate,
       eventTitle,
@@ -83,11 +82,10 @@ function doPost(e) {
       q8,
       q9,
       q10,
+      q10Other,
       q11,
-      q11Other,
       q12,
       q13,
-      q14,
       attendeeName,
       attendeeEmail,
       attendeePhone,
@@ -121,11 +119,10 @@ function doPost(e) {
       q8: q8,
       q9: q9,
       q10: q10,
+      q10Other: q10Other,
       q11: q11,
-      q11Other: q11Other,
       q12: q12,
       q13: q13,
-      q14: q14,
       attendeeName: attendeeName,
       attendeeEmail: attendeeEmail,
       attendeePhone: attendeePhone,
@@ -216,32 +213,28 @@ function sendAdminNotification(f) {
           <td style="padding: 10px; border: 1px solid #282d3b; color: #fca5a5;">${escapeHtml(f.q5 || 'None')}</td>
         </tr>
         <tr>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q8: 2027 Events Interest</strong></td>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(f.q8 || 'N/A')}</td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q8: Attend Another Event?</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #10b981; font-weight: bold;">${escapeHtml(f.q8)}</td>
         </tr>
         <tr style="background-color: #171a23;">
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q9: Attend Another Event?</strong></td>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #10b981; font-weight: bold;">${escapeHtml(f.q9)}</td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q9: Recommend Score (NPS)</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #38bdf8; font-weight: bold;">${escapeHtml(f.q9)}</td>
         </tr>
         <tr>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q10: Recommend Score (NPS)</strong></td>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #38bdf8; font-weight: bold;">${escapeHtml(f.q10)}</td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q10: Heard About Live</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(f.q10)} ${f.q10Other ? '(' + escapeHtml(f.q10Other) + ')' : ''}</td>
         </tr>
         <tr style="background-color: #171a23;">
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q11: Heard About Live</strong></td>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(f.q11)} ${f.q11Other ? '(' + escapeHtml(f.q11Other) + ')' : ''}</td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q11: Current Updates</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(f.q11 || 'N/A')}</td>
         </tr>
         <tr>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q12: Current Updates</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q12: Preferred Updates</strong></td>
           <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(f.q12 || 'N/A')}</td>
         </tr>
         <tr style="background-color: #171a23;">
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q13: Preferred Updates</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q13: 2027 Involvement</strong></td>
           <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(f.q13 || 'N/A')}</td>
-        </tr>
-        <tr>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Q14: 2027 Involvement</strong></td>
-          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(f.q14 || 'N/A')}</td>
         </tr>
       </table>
 
@@ -301,8 +294,8 @@ function sendAttendeeConfirmation(f) {
       <div style="background-color: #f9fafb; border-radius: 8px; padding: 16px; margin: 20px 0; border: 1px solid #e5e7eb;">
         <h4 style="margin: 0 0 10px 0; color: #111827; font-size: 13px; text-transform: uppercase;">Your Submitted Responses</h4>
         <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Overall Experience:</strong> ${escapeHtml(f.q2)}</p>
-        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Would Attend Future Events:</strong> ${escapeHtml(f.q9)}</p>
-        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Recommendation Score:</strong> ${escapeHtml(f.q10)}</p>
+        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Would Attend Future Events:</strong> ${escapeHtml(f.q8)}</p>
+        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Recommendation Score:</strong> ${escapeHtml(f.q9)}</p>
         ${f.q4 ? `<p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Enjoyed Most:</strong> ${escapeHtml(f.q4)}</p>` : ''}
         ${f.q7 ? `<p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Artist Desired Next:</strong> ${escapeHtml(f.q7)}</p>` : ''}
       </div>
@@ -364,16 +357,15 @@ function getOrCreateFeedbackSheet() {
       "Q3: Ticketing Platform (Toronto)",
       "Q4: Enjoyed Most",
       "Q5: Areas to Improve",
-      "Q6: One Thing Better",
+      "Q6: ONE Thing Better",
       "Q7: Artist Desired Next",
-      "Q8: 2027 Events Interest",
-      "Q9: Attend Another Event",
-      "Q10: Recommend Score (1-10)",
-      "Q11: Heard About Live",
-      "Q11: Heard (Other Details)",
-      "Q12: Current Updates Channels",
-      "Q13: Preferred Updates Channels",
-      "Q14: 2027 Involvement Interest",
+      "Q8: Attend Another Event",
+      "Q9: Recommend Score (1-10)",
+      "Q10: Heard About Live",
+      "Q10: Heard (Other Details)",
+      "Q11: Current Updates Channels",
+      "Q12: Preferred Updates Channels",
+      "Q13: 2027 Involvement Interest",
       "Attendee Name",
       "Attendee Email",
       "Attendee Phone",
