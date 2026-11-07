@@ -1,12 +1,13 @@
 /**
  * ============================================================================
  * LEVITATE ENTERTAINMENT — RIMI TOMY LIVE CANADA 2026
- * Google Apps Script for Real-Time Event Feedback Collection & Automated Emails
- * Matches Official Attendee Feedback Questionnaire (13 Questions + Contacts)
+ * Google Apps Script for Real-Time Event & Sponsor Feedback Collection
+ * Supports both Attendee Feedback and Corporate Sponsor Feedback
  * ============================================================================
  */
 
 const SHEET_NAME = "Rimi Tomy Feedback";
+const SPONSOR_SHEET_NAME = "Rimi Tomy Sponsor Feedback";
 const ADMIN_EMAIL = "websitelevitate.inc@gmail.com";
 const SENDER_NAME = "Levitate Entertainment";
 
@@ -16,8 +17,9 @@ const SENDER_NAME = "Levitate Entertainment";
 function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({
     status: "online",
-    service: "Levitate Event Feedback Web App",
-    sheet: SHEET_NAME,
+    service: "Levitate Event & Sponsor Feedback Web App",
+    attendeeSheet: SHEET_NAME,
+    sponsorSheet: SPONSOR_SHEET_NAME,
     adminEmail: ADMIN_EMAIL,
     timestamp: new Date().toISOString()
   })).setMimeType(ContentService.MimeType.JSON);
@@ -31,7 +33,6 @@ function doPost(e) {
   lock.tryLock(15000); // 15s lock to prevent concurrent write collisions
 
   try {
-    var sheet = getOrCreateFeedbackSheet();
     var data = {};
 
     if (e && e.postData && e.postData.contents) {
@@ -46,8 +47,123 @@ function doPost(e) {
 
     var now = new Date();
     var formattedDate = Utilities.formatDate(now, Session.getScriptTimeZone() || "America/Toronto", "yyyy-MM-dd HH:mm:ss");
-
     var eventTitle = data.eventTitle || "Rimi Tomy Live Canada 2026";
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // BRANCH A: CORPORATE SPONSOR FEEDBACK
+    // ──────────────────────────────────────────────────────────────────────────
+    if (data.feedbackType === "sponsor" || data.sponsorTier || data.companyName) {
+      var sponsorSheet = getOrCreateSponsorFeedbackSheet();
+
+      var sCompanyName = data.companyName || "";
+      var sContactName = data.contactName || data.contactPerson || "";
+      var sContactTitle = data.contactTitle || "";
+      var sEmail = data.email || "";
+      var sPhone = data.phone || "";
+      var sCities = data.citiesSponsored || "";
+      var sTier = data.sponsorTier || "";
+      var sVisibility = data.visibilityRating || "";
+      var sDeliverables = data.deliverablesExecution || "";
+      var sValuable = data.valuableDeliverables || "";
+      var sSupport = data.teamSupport || "";
+      var sAudience = data.audienceFit || "";
+      var sObjectives = data.objectivesAchieved || "";
+      var sRoi = data.roiSatisfaction || "";
+      var sFuture = data.futureSponsorInterest || "";
+      var sEvents2027 = data.eventsInterest2027 || "";
+      var sDesiredArtists = data.desiredArtists || "";
+      var sImprovement = data.improvementSuggestion || "";
+      var sAppreciated = data.appreciatedMost || "";
+      var sTestimonial = data.testimonialQuote || "";
+      var sPermission = data.featurePermission || "";
+
+      var sponsorRow = [
+        formattedDate,
+        eventTitle,
+        sCompanyName,
+        sContactName,
+        sContactTitle,
+        sEmail,
+        sPhone,
+        sCities,
+        sTier,
+        sVisibility,
+        sDeliverables,
+        sValuable,
+        sSupport,
+        sAudience,
+        sObjectives,
+        sRoi,
+        sFuture,
+        sEvents2027,
+        sDesiredArtists,
+        sImprovement,
+        sAppreciated,
+        sTestimonial,
+        sPermission
+      ];
+
+      sponsorSheet.appendRow(sponsorRow);
+      var lastSponsorRow = sponsorSheet.getLastRow();
+
+      var sRowRange = sponsorSheet.getRange(lastSponsorRow, 1, 1, sponsorRow.length);
+      sRowRange.setBackground(lastSponsorRow % 2 === 0 ? "#f9fafb" : "#ffffff");
+
+      var sponsorDetails = {
+        timestamp: formattedDate,
+        eventTitle: eventTitle,
+        companyName: sCompanyName,
+        contactName: sContactName,
+        contactTitle: sContactTitle,
+        email: sEmail,
+        phone: sPhone,
+        cities: sCities,
+        tier: sTier,
+        visibility: sVisibility,
+        deliverables: sDeliverables,
+        valuable: sValuable,
+        support: sSupport,
+        audience: sAudience,
+        objectives: sObjectives,
+        roi: sRoi,
+        future: sFuture,
+        events2027: sEvents2027,
+        desiredArtists: sDesiredArtists,
+        improvement: sImprovement,
+        appreciated: sAppreciated,
+        testimonial: sTestimonial,
+        permission: sPermission,
+        rowIndex: lastSponsorRow
+      };
+
+      try {
+        sendAdminSponsorNotification(sponsorDetails);
+      } catch (adminErr) {
+        console.error("Admin sponsor notification mail error: " + adminErr.toString());
+      }
+
+      if (sEmail && sEmail.indexOf("@") > 0) {
+        try {
+          sendSponsorConfirmation(sponsorDetails);
+        } catch (sponsorMailErr) {
+          console.error("Sponsor confirmation email error: " + sponsorMailErr.toString());
+        }
+      }
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        type: "sponsor",
+        message: "Sponsor feedback recorded in Google Sheet and emails dispatched!",
+        row: lastSponsorRow,
+        timestamp: formattedDate
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // BRANCH B: ATTENDEE FEEDBACK (13 Questions + Contacts)
+    // ──────────────────────────────────────────────────────────────────────────
+    var sheet = getOrCreateFeedbackSheet();
+
     var q1 = data.cityAttended || data.city || "";
     var q2 = data.overallExperience || "";
     var q3 = data.ticketingPlatform || "";
@@ -103,9 +219,6 @@ function doPost(e) {
       rowRange.setBackground("#ffffff");
     }
 
-    // ------------------------------------------------------------------------
-    // EMAIL NOTIFICATIONS (Safe Execution - Never blocks sheet write)
-    // ------------------------------------------------------------------------
     var feedbackDetails = {
       timestamp: formattedDate,
       eventTitle: eventTitle,
@@ -148,7 +261,8 @@ function doPost(e) {
 
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      message: "Feedback recorded in Sheet and emails dispatched!",
+      type: "attendee",
+      message: "Attendee feedback recorded in Sheet and emails dispatched!",
       row: lastRowIndex,
       timestamp: formattedDate
     })).setMimeType(ContentService.MimeType.JSON);
@@ -165,7 +279,7 @@ function doPost(e) {
 }
 
 /**
- * Sends real-time notification to websitelevitate.inc@gmail.com
+ * Sends real-time notification to websitelevitate.inc@gmail.com for attendee feedback
  */
 function sendAdminNotification(f) {
   var subject = "Feedback Submission: " + (f.q1 || "Concert") + " - " + f.attendeeName;
@@ -173,7 +287,7 @@ function sendAdminNotification(f) {
   var htmlBody = `
   <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #0c0d12; color: #f3f4f6; border-radius: 12px; overflow: hidden; border: 1px solid #232733;">
     <div style="background: linear-gradient(135deg, #1f1b2e 0%, #11131a 100%); padding: 24px; border-bottom: 2px solid #F59E0B;">
-      <h2 style="margin: 0 0 6px 0; color: #ffffff; font-size: 20px;">New Feedback Received</h2>
+      <h2 style="margin: 0 0 6px 0; color: #ffffff; font-size: 20px;">New Attendee Feedback Received</h2>
       <p style="margin: 0; color: #F59E0B; font-size: 13px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">
         ${f.eventTitle} &bull; ${escapeHtml(f.q1)}
       </p>
@@ -238,7 +352,6 @@ function sendAdminNotification(f) {
         </tr>
       </table>
 
-      <!-- Open-ended feedback -->
       ${f.q6 ? `
       <div style="margin-bottom: 15px; padding: 12px; background-color: #171a23; border-radius: 6px;">
         <div style="color: #F59E0B; font-size: 12px; font-weight: bold; margin-bottom: 4px;">Q6: ONE Thing We Could Do Better:</div>
@@ -268,7 +381,172 @@ function sendAdminNotification(f) {
 }
 
 /**
- * Sends a clean confirmation email to the attendee
+ * Sends real-time notification to websitelevitate.inc@gmail.com for SPONSOR feedback
+ */
+function sendAdminSponsorNotification(s) {
+  var subject = "⭐ Sponsor Feedback: " + s.companyName + " (" + s.tier + ") — " + s.eventTitle;
+
+  var htmlBody = `
+  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 680px; margin: 0 auto; background-color: #0c0d12; color: #f3f4f6; border-radius: 12px; overflow: hidden; border: 1px solid #232733;">
+    <div style="background: linear-gradient(135deg, #2b1f0b 0%, #11131a 100%); padding: 24px; border-bottom: 2px solid #F59E0B;">
+      <span style="background: #F59E0B; color: #0c0d12; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase;">Official Sponsor Review</span>
+      <h2 style="margin: 8px 0 4px 0; color: #ffffff; font-size: 22px;">${escapeHtml(s.companyName)}</h2>
+      <p style="margin: 0; color: #F59E0B; font-size: 13px; font-weight: bold;">
+        ${escapeHtml(s.tier)} &bull; ${escapeHtml(s.cities)}
+      </p>
+    </div>
+
+    <div style="padding: 24px;">
+      <!-- Contact Info -->
+      <div style="background-color: #171a23; border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 4px solid #F59E0B;">
+        <h4 style="margin: 0 0 10px 0; color: #F59E0B; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Partner Contact Details</h4>
+        <p style="margin: 4px 0; color: #e2e8f0; font-size: 13px;"><strong>Contact Person:</strong> ${escapeHtml(s.contactName)} ${s.contactTitle ? '(' + escapeHtml(s.contactTitle) + ')' : ''}</p>
+        <p style="margin: 4px 0; color: #e2e8f0; font-size: 13px;"><strong>Email:</strong> ${escapeHtml(s.email)}</p>
+        <p style="margin: 4px 0; color: #e2e8f0; font-size: 13px;"><strong>Phone:</strong> ${s.phone ? escapeHtml(s.phone) : '<span style="color: #6b7280;">Not provided</span>'}</p>
+        <p style="margin: 4px 0; color: #e2e8f0; font-size: 13px;"><strong>Time:</strong> ${s.timestamp}</p>
+      </div>
+
+      <!-- Core Ratings -->
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+        <tr style="background-color: #171a23;">
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af; width: 45%;"><strong>Brand Visibility Rating</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #F59E0B; font-weight: bold;">${escapeHtml(s.visibility)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Deliverables Execution</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #ffffff; font-weight: bold;">${escapeHtml(s.deliverables)}</td>
+        </tr>
+        <tr style="background-color: #171a23;">
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Team Support & Comms</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #10b981; font-weight: bold;">${escapeHtml(s.support)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Audience Demographic Fit</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(s.audience)}</td>
+        </tr>
+        <tr style="background-color: #171a23;">
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>ROI Satisfaction</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #38bdf8; font-weight: bold;">${escapeHtml(s.roi)}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Future Sponsoring Interest</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #10b981; font-weight: bold;">${escapeHtml(s.future)}</td>
+        </tr>
+        <tr style="background-color: #171a23;">
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>2027 Events Interest</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(s.events2027 || 'None specified')}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #9ca3af;"><strong>Public Feature Permission</strong></td>
+          <td style="padding: 10px; border: 1px solid #282d3b; color: #e2e8f0;">${escapeHtml(s.permission)}</td>
+        </tr>
+      </table>
+
+      ${s.valuable ? `
+      <div style="margin-bottom: 15px; padding: 12px; background-color: #171a23; border-radius: 6px;">
+        <div style="color: #F59E0B; font-size: 12px; font-weight: bold; margin-bottom: 4px;">Most Valuable Deliverables:</div>
+        <div style="color: #e2e8f0; font-size: 13px;">${escapeHtml(s.valuable)}</div>
+      </div>` : ''}
+
+      ${s.objectives ? `
+      <div style="margin-bottom: 15px; padding: 12px; background-color: #171a23; border-radius: 6px;">
+        <div style="color: #F59E0B; font-size: 12px; font-weight: bold; margin-bottom: 4px;">Key Objectives Achieved:</div>
+        <div style="color: #e2e8f0; font-size: 13px;">${escapeHtml(s.objectives)}</div>
+      </div>` : ''}
+
+      ${s.improvement ? `
+      <div style="margin-bottom: 15px; padding: 12px; background-color: #171a23; border-radius: 6px;">
+        <div style="color: #F87171; font-size: 12px; font-weight: bold; margin-bottom: 4px;">One Thing We Could Improve:</div>
+        <div style="color: #e2e8f0; font-size: 13px; line-height: 1.5;">"${escapeHtml(s.improvement)}"</div>
+      </div>` : ''}
+
+      ${s.appreciated ? `
+      <div style="margin-bottom: 15px; padding: 12px; background-color: #171a23; border-radius: 6px;">
+        <div style="color: #34D399; font-size: 12px; font-weight: bold; margin-bottom: 4px;">What Partner Appreciated Most:</div>
+        <div style="color: #e2e8f0; font-size: 13px; line-height: 1.5;">"${escapeHtml(s.appreciated)}"</div>
+      </div>` : ''}
+
+      ${s.testimonial ? `
+      <div style="margin-bottom: 15px; padding: 12px; background-color: #171a23; border-radius: 6px; border: 1px dashed #F59E0B;">
+        <div style="color: #F59E0B; font-size: 12px; font-weight: bold; margin-bottom: 4px;">Partner Testimonial Quote:</div>
+        <div style="color: #ffffff; font-style: italic; font-size: 13px; line-height: 1.5;">"${escapeHtml(s.testimonial)}"</div>
+      </div>` : ''}
+
+      <div style="text-align: center; margin-top: 25px;">
+        <a href="https://levitateinc.ca/admin" style="background: #F59E0B; color: #0c0d12; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: bold; font-size: 13px; display: inline-block;">
+          Open Admin Dashboard
+        </a>
+      </div>
+    </div>
+  </div>`;
+
+  MailApp.sendEmail({
+    to: ADMIN_EMAIL,
+    subject: subject,
+    name: SENDER_NAME,
+    htmlBody: htmlBody
+  });
+}
+
+/**
+ * Sends a confirmation email to the sponsor contact
+ */
+function sendSponsorConfirmation(s) {
+  var subject = "Thank You for Sponsoring " + s.eventTitle + " — Levitate Entertainment";
+
+  var htmlBody = `
+  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #1f2937; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
+    <div style="background-color: #0c0d12; padding: 30px 24px; text-align: center;">
+      <h1 style="color: #ffffff; font-size: 22px; margin: 0 0 6px 0; font-weight: 800;">Thank You for Your Partnership!</h1>
+      <p style="color: #F59E0B; font-size: 13px; margin: 0; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">
+        ${s.eventTitle} &bull; ${escapeHtml(s.companyName)}
+      </p>
+    </div>
+
+    <div style="padding: 28px 24px;">
+      <p style="font-size: 15px; line-height: 1.6; margin-top: 0;">
+        Dear <strong>${escapeHtml(s.contactName)}</strong> and the <strong>${escapeHtml(s.companyName)}</strong> team,
+      </p>
+
+      <p style="font-size: 14px; line-height: 1.6; color: #4b5563;">
+        On behalf of everyone at Levitate Entertainment, thank you for your official sponsorship of <strong>${s.eventTitle}</strong> in <strong>${escapeHtml(s.cities)}</strong>. Your brand's support was a vital cornerstone in bringing this cultural tour across Canadian cities!
+      </p>
+
+      <div style="background-color: #f9fafb; border-radius: 8px; padding: 16px; margin: 20px 0; border: 1px solid #e5e7eb;">
+        <h4 style="margin: 0 0 10px 0; color: #111827; font-size: 13px; text-transform: uppercase;">Sponsorship Summary</h4>
+        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Company:</strong> ${escapeHtml(s.companyName)}</p>
+        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Sponsorship Tier:</strong> ${escapeHtml(s.tier)}</p>
+        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Sponsored Region:</strong> ${escapeHtml(s.cities)}</p>
+        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Visibility Rating:</strong> ${escapeHtml(s.visibility)}</p>
+        <p style="margin: 4px 0; font-size: 13px; color: #374151;"><strong>Deliverables Execution:</strong> ${escapeHtml(s.deliverables)}</p>
+      </div>
+
+      <p style="font-size: 14px; line-height: 1.6; color: #4b5563;">
+        Our partnership team is finalizing our comprehensive Post-Event Media & Analytics Deck and will share it with you shortly. We are also preparing early-bird partnership opportunities for <strong>Maha Onam Canada 2027</strong> and the <strong>Vidhu Prathap Tour 2027</strong>.
+      </p>
+
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
+        <a href="https://levitateinc.ca" style="background-color: #F59E0B; color: #0c0d12; text-decoration: none; padding: 10px 24px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block;">
+          Visit Levitate Entertainment
+        </a>
+      </div>
+    </div>
+
+    <div style="background-color: #f9fafb; padding: 16px 24px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb;">
+      &copy; 2026 Levitate Entertainment Inc. All rights reserved. &bull; websitelevitate.inc@gmail.com
+    </div>
+  </div>`;
+
+  MailApp.sendEmail({
+    to: s.email,
+    subject: subject,
+    name: SENDER_NAME,
+    htmlBody: htmlBody
+  });
+}
+
+/**
+ * Sends a confirmation email to the attendee
  */
 function sendAttendeeConfirmation(f) {
   var subject = "Thank You for Your Feedback — " + f.eventTitle;
@@ -338,7 +616,7 @@ function escapeHtml(str) {
 }
 
 /**
- * Creates sheet & formats headers automatically
+ * Creates sheet & formats headers automatically for Attendee feedback
  */
 function getOrCreateFeedbackSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -374,7 +652,6 @@ function getOrCreateFeedbackSheet() {
 
     sheet.appendRow(headers);
 
-    // Style the Header Row
     var headerRange = sheet.getRange(1, 1, 1, headers.length);
     headerRange.setBackground("#111827");
     headerRange.setFontColor("#FBBF24");
@@ -403,9 +680,68 @@ function getOrCreateFeedbackSheet() {
 }
 
 /**
- * Optional Test Runner: Initializes headers immediately in active Google Sheet
+ * Creates sheet & formats headers automatically for Sponsor feedback
  */
-function setupSheet() {
-  getOrCreateFeedbackSheet();
-  SpreadsheetApp.getUi().alert("Sheet 'Rimi Tomy Feedback' initialized with 14 questions + contact headers!");
+function getOrCreateSponsorFeedbackSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SPONSOR_SHEET_NAME);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(SPONSOR_SHEET_NAME);
+  }
+
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "Timestamp",
+      "Event",
+      "Company Name",
+      "Contact Person",
+      "Designation",
+      "Email",
+      "Phone",
+      "Cities Sponsored",
+      "Sponsorship Tier",
+      "Brand Visibility Rating",
+      "Deliverables Execution",
+      "Most Valuable Deliverables",
+      "Team Support & Comms",
+      "Audience Demographic Fit",
+      "Key Objectives Achieved",
+      "ROI Satisfaction",
+      "Future Sponsoring Interest",
+      "2027 Events Interest",
+      "Desired Artists / Formats",
+      "ONE Thing to Improve",
+      "What Appreciated Most",
+      "Testimonial Quote",
+      "Feature Permission"
+    ];
+
+    sheet.appendRow(headers);
+
+    var headerRange = sheet.getRange(1, 1, 1, headers.length);
+    headerRange.setBackground("#1f1b2e");
+    headerRange.setFontColor("#F59E0B");
+    headerRange.setFontWeight("bold");
+    headerRange.setFontSize(11);
+    headerRange.setWrap(true);
+    headerRange.setVerticalAlignment("middle");
+    headerRange.setHorizontalAlignment("center");
+    sheet.setRowHeight(1, 45);
+    sheet.setFrozenRows(1);
+
+    for (var i = 1; i <= headers.length; i++) {
+      sheet.setColumnWidth(i, 185);
+    }
+    sheet.setColumnWidth(1, 160);
+    sheet.setColumnWidth(3, 200);
+    sheet.setColumnWidth(12, 250);
+    sheet.setColumnWidth(15, 250);
+    sheet.setColumnWidth(20, 240);
+    sheet.setColumnWidth(21, 240);
+    sheet.setColumnWidth(22, 280);
+    sheet.setColumnWidth(23, 220);
+  }
+
+  return sheet;
 }
